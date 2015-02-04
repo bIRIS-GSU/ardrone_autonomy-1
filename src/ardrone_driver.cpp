@@ -46,19 +46,7 @@ ARDroneDriver::ARDroneDriver()
     is_inited(false),
     last_receive_time(0.0)
 {
-  cmd_vel_sub = node_handle.subscribe("cmd_vel", 1, &CmdVelCallback);
-  takeoff_sub = node_handle.subscribe("ardrone/takeoff", 1, &TakeoffCallback);
-  reset_sub = node_handle.subscribe("ardrone/reset", 1, &ResetCallback);
-  land_sub = node_handle.subscribe("ardrone/land", 1, &LandCallback);
-  image_pub = image_transport.advertiseCamera("ardrone/image_raw", 10);
-  hori_pub = image_transport.advertiseCamera("ardrone/front/image_raw", 10);
-  vert_pub = image_transport.advertiseCamera("ardrone/bottom/image_raw", 10);
-  toggle_cam_srv = node_handle.advertiseService("ardrone/togglecam", ToggleCamCallback);
-  set_cam_channel_srv = node_handle.advertiseService("ardrone/setcamchannel", SetCamChannelCallback);
-  set_led_animation_srv = node_handle.advertiseService("ardrone/setledanimation", SetLedAnimationCallback);
-  flat_trim_srv = node_handle.advertiseService("ardrone/flattrim", FlatTrimCallback);
-  set_flight_anim_srv = node_handle.advertiseService("ardrone/setflightanimation", SetFlightAnimationCallback);
-  set_record_srv = node_handle.advertiseService("ardrone/setrecord", SetRecordCallback);
+ 
 
   /* TF Frames */
   private_nh.param<std::string>("drone_frame_id", drone_frame_id, "ardrone_base");
@@ -158,7 +146,73 @@ void ARDroneDriver::run()
         {
           ROS_WARN("The AR-Drone has a suspicious Firmware number. It usually means the network link is unreliable.");
         }
+      
+         char cmd_vel_name[25];
+		   strcpy(cmd_vel_name, ardrone_control_config.ardrone_name);
+		   strcat(cmd_vel_name, "/cmd_vel");
+         cmd_vel_sub = node_handle.subscribe(cmd_vel_name, 1, &CmdVelCallback);
+         
+         char takeoff_name[25];
+	   	strcpy(takeoff_name, ardrone_control_config.ardrone_name);
+		   strcat(takeoff_name, "/takeoff");
+         takeoff_sub = node_handle.subscribe(takeoff_name, 1, &TakeoffCallback);
+         
+         char reset_name[25];
+		   strcpy(reset_name, ardrone_control_config.ardrone_name);
+		   strcat(reset_name, "/reset");
+         reset_sub = node_handle.subscribe(reset_name, 1, &ResetCallback);
+         
+         char land_name[25];
+		   strcpy(land_name, ardrone_control_config.ardrone_name);
+		   strcat(land_name, "/land");
+         land_sub = node_handle.subscribe(land_name, 1, &LandCallback);
+         
+         char image_name[25];
+		   strcpy(image_name, ardrone_control_config.ardrone_name);
+		   strcat(image_name, "/image_raw");
+         image_pub = image_transport.advertiseCamera(image_name, 10);
+         
+         char hori_name[30];
+		   strcpy(hori_name, ardrone_control_config.ardrone_name);
+		   strcat(hori_name, "/front/image_raw");
+         hori_pub = image_transport.advertiseCamera(hori_name, 10);
+         
+         char vert_name[30];
+		   strcpy(vert_name, ardrone_control_config.ardrone_name);
+		   strcat(vert_name, "/bottom/image_raw");
+         vert_pub = image_transport.advertiseCamera(vert_name, 10);
+         
+         char toggle_cam_name[25];
+		   strcpy(toggle_cam_name, ardrone_control_config.ardrone_name);
+		   strcat(toggle_cam_name, "/togglecam");
+         toggle_cam_srv = node_handle.advertiseService(toggle_cam_name, ToggleCamCallback);
+         
+         char set_cam_channel_name[25];
+		   strcpy(set_cam_channel_name, ardrone_control_config.ardrone_name);
+		   strcat(set_cam_channel_name, "/setcamchannel");
+         set_cam_channel_srv = node_handle.advertiseService(set_cam_channel_name, SetCamChannelCallback);
+         
+         char set_led_animation_name[30];
+		   strcpy(set_led_animation_name, ardrone_control_config.ardrone_name);
+	   	strcat(set_led_animation_name, "/setledanimation");
+         set_led_animation_srv = node_handle.advertiseService(set_led_animation_name, SetLedAnimationCallback);
+         
+         char flat_trim_name[25];
+		   strcpy(flat_trim_name, ardrone_control_config.ardrone_name);
+		   strcat(flat_trim_name, "/flattrim");
+         flat_trim_srv = node_handle.advertiseService(flat_trim_name, FlatTrimCallback);
+         
+         char set_flight_anim_name[30];
+		   strcpy(set_flight_anim_name, ardrone_control_config.ardrone_name);
+		   strcat(set_flight_anim_name, "/setflightanimation");
+         set_flight_anim_srv = node_handle.advertiseService(set_flight_anim_name, SetFlightAnimationCallback);
+         
+         char set_record_name[25];
+		   strcpy(set_record_name, ardrone_control_config.ardrone_name);
+		   strcat(set_record_name, "/setrecord");
+         set_record_srv = node_handle.advertiseService(set_record_name, SetRecordCallback);
       }
+         
     }
     else
     {
